@@ -48,7 +48,7 @@ var AccordionItem = function (_Component) {
   function AccordionItem(props) {
     _classCallCheck(this, AccordionItem);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AccordionItem).call(this, props));
+    var _this = _possibleConstructorReturn(this, (AccordionItem.__proto__ || Object.getPrototypeOf(AccordionItem)).call(this, props));
 
     _this.state = {
       maxHeight: props.expanded ? 'none' : 0,

@@ -30,7 +30,7 @@ var AccordionItemTitle = function (_Component) {
   function AccordionItemTitle() {
     _classCallCheck(this, AccordionItemTitle);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(AccordionItemTitle).apply(this, arguments));
+    return _possibleConstructorReturn(this, (AccordionItemTitle.__proto__ || Object.getPrototypeOf(AccordionItemTitle)).apply(this, arguments));
   }
 
   _createClass(AccordionItemTitle, [{

@@ -59,7 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.AccordionItem = exports.Accordion = undefined;
+	exports.AccordionItemBody = exports.AccordionItemTitle = exports.AccordionItem = exports.Accordion = undefined;
 
 	var _Accordion2 = __webpack_require__(1);
 
@@ -69,10 +69,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _AccordionItem3 = _interopRequireDefault(_AccordionItem2);
 
+	var _AccordionItemTitle2 = __webpack_require__(9);
+
+	var _AccordionItemTitle3 = _interopRequireDefault(_AccordionItemTitle2);
+
+	var _AccordionItemBody2 = __webpack_require__(8);
+
+	var _AccordionItemBody3 = _interopRequireDefault(_AccordionItemBody2);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.Accordion = _Accordion3.default;
 	exports.AccordionItem = _AccordionItem3.default;
+	exports.AccordionItemTitle = _AccordionItemTitle3.default;
+	exports.AccordionItemBody = _AccordionItemBody3.default;
 
 /***/ },
 /* 1 */
@@ -85,6 +95,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	exports.updateItems = updateItems;
 
 	var _classnames = __webpack_require__(2);
 
@@ -110,6 +122,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return [].concat(obj);
 	};
 
+	function updateItems(index, activeItems, allowMultiple) {
+	  var newActivetems = activeItems.slice(0);
+	  var position = activeItems.indexOf(index);
+	  if (position !== -1) {
+	    newActiveItems.splice(position, 1);
+	  } else if (allowMultiple) {
+	    newActiveItems.push(index);
+	  } else {
+	    newActiveItems = [index];
+	  }
+	  return newActiveItems;
+	}
+
 	// removes duplicate from array
 	var dedupeArr = function dedupeArr(arr) {
 	  return arr.filter(function (item, index, inputArray) {
@@ -123,7 +148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Accordion(props) {
 	    _classCallCheck(this, Accordion);
 
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Accordion).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Accordion.__proto__ || Object.getPrototypeOf(Accordion)).call(this, props));
 
 	    var activeItems = arrayify(props.activeItems);
 
@@ -142,21 +167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var newState = {};
 
 	      // clone active items state array
-	      newState.activeItems = this.state.activeItems.slice(0);
-
-	      var position = newState.activeItems.indexOf(index);
-
-	      if (position !== -1) {
-	        newState.activeItems.splice(position, 1);
-
-	        if (this.props.openNextAccordionItem && index !== this.props.children.length - 1) {
-	          newState.activeItems.push(index + 1);
-	        }
-	      } else if (this.props.allowMultiple) {
-	        newState.activeItems.push(index);
-	      } else {
-	        newState.activeItems = [index];
-	      }
+	      newState.activeItems = updateItems(index, this.state.activeItems, this.props.allowMultiple);
 
 	      if (this.props.onChange) {
 	        this.props.onChange(newState);
@@ -179,11 +190,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return children.map(function (item, index) {
 	        var key = _this2.props.openNextAccordionItem ? index : item.props.slug || index;
 	        var expanded = _this2.state.activeItems.indexOf(key) !== -1;
+	        var onClick = _this2.handleClick.bind(_this2, key);
+
+	        if (_this2.props.onClick) {
+	          onClick = function onClick() {
+	            return _this2.props.onClick(key);
+	          };
+	          expanded = _this2.props.activeItems.indexOf(key) !== -1;
+	        }
+
+	        if (item.props.onClick) {
+	          onClick = item.props.onClick;
+	        }
+	        if (_this2.props.onClick) {
+	          onClick = function onClick() {
+	            return _this2.props.onClick(key);
+	          };
+	          expanded = _this2.props.activeItems.indexOf(key) !== -1;
+	        }
+	        if (item.props.onClick) {
+	          onClick = item.props.onClick;
+	        }
 
 	        return _react2.default.cloneElement(item, {
 	          expanded: expanded,
 	          key: key,
-	          onClick: _this2.handleClick.bind(_this2, key),
+	          onClick: onClick,
 	          ref: 'item-' + key
 	        });
 	      });
@@ -216,6 +248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  allowMultiple: _react.PropTypes.bool,
 	  activeItems: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.array]),
 	  className: _react.PropTypes.string,
+	  onClick: _react.PropTypes.func,
 	  onChange: _react.PropTypes.func,
 	  style: _react.PropTypes.object
 	};
@@ -340,7 +373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function AccordionItem(props) {
 	    _classCallCheck(this, AccordionItem);
 
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AccordionItem).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (AccordionItem.__proto__ || Object.getPrototypeOf(AccordionItem)).call(this, props));
 
 	    _this.state = {
 	      maxHeight: props.expanded ? 'none' : 0,
@@ -781,7 +814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function AccordionItemBody() {
 	    _classCallCheck(this, AccordionItemBody);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AccordionItemBody).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (AccordionItemBody.__proto__ || Object.getPrototypeOf(AccordionItemBody)).apply(this, arguments));
 	  }
 
 	  _createClass(AccordionItemBody, [{
@@ -858,7 +891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function AccordionItemTitle() {
 	    _classCallCheck(this, AccordionItemTitle);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AccordionItemTitle).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (AccordionItemTitle.__proto__ || Object.getPrototypeOf(AccordionItemTitle)).apply(this, arguments));
 	  }
 
 	  _createClass(AccordionItemTitle, [{
