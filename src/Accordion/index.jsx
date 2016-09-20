@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 const arrayify = obj => [].concat(obj);
 
 export function updateItems(index, activeItems, allowMultiple) {
-  let newActivetems = activeItems.slice(0);
+  let newActiveItems = activeItems.slice(0);
   const position = activeItems.indexOf(index);
   if (position !== -1) {
     newActiveItems.splice(position, 1);

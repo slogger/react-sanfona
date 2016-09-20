@@ -123,7 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	function updateItems(index, activeItems, allowMultiple) {
-	  var newActivetems = activeItems.slice(0);
+	  var newActiveItems = activeItems.slice(0);
 	  var position = activeItems.indexOf(index);
 	  if (position !== -1) {
 	    newActiveItems.splice(position, 1);
