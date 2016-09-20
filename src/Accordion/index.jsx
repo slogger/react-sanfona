@@ -6,6 +6,19 @@ import ReactDOM from 'react-dom';
 
 const arrayify = obj => [].concat(obj);
 
+export function updateItems(index, activeItems, allowMultiple) {
+  let newActivetems = activeItems.slice(0);
+  const position = activeItems.indexOf(index);
+  if (position !== -1) {
+    newActiveItems.splice(position, 1);
+  } else if (allowMultiple) {
+    newActiveItems.push(index);
+  } else {
+    newActiveItems = [index];
+  }
+  return newActiveItems;
+}
+
 // removes duplicate from array
 const dedupeArr = arr => arr.filter((item, index, inputArray) => {
   return inputArray.indexOf(item) === index;
@@ -29,21 +42,7 @@ export default class Accordion extends Component {
     let newState = {};
 
     // clone active items state array
-    newState.activeItems = this.state.activeItems.slice(0);
-
-    const position = newState.activeItems.indexOf(index);
-
-    if (position !== -1) {
-      newState.activeItems.splice(position, 1);
-
-      if(this.props.openNextAccordionItem && index !== this.props.children.length - 1) {
-        newState.activeItems.push(index + 1);
-      }
-    } else if (this.props.allowMultiple) {
-      newState.activeItems.push(index);
-    } else {
-      newState.activeItems = [index];
-    }
+    newState.activeItems = updateItems(index, this.state.activeItems, this.props.allowMultiple);
 
     if (this.props.onChange) {
       this.props.onChange(newState);
@@ -62,12 +61,29 @@ export default class Accordion extends Component {
     const children = arrayify(this.props.children);
     return children.map((item, index) => {
       const key = this.props.openNextAccordionItem ? index : (item.props.slug || index);
-      const expanded = this.state.activeItems.indexOf(key) !== -1;
+      let expanded = this.state.activeItems.indexOf(key) !== -1;
+      let onClick = this.handleClick.bind(this, key);
+
+      if (this.props.onClick) {
+        onClick = () => this.props.onClick(key);
+        expanded = this.props.activeItems.indexOf(key) !== -1;
+      }
+
+      if (item.props.onClick) {
+        onClick = item.props.onClick;
+      }
+      if (this.props.onClick) {
+        onClick = () => this.props.onClick(key);
+        expanded = this.props.activeItems.indexOf(key) !== -1;
+      }
+      if (item.props.onClick) {
+        onClick = item.props.onClick;
+      }
 
       return React.cloneElement(item, {
         expanded: expanded,
         key: key,
-        onClick: this.handleClick.bind(this, key),
+        onClick: onClick,
         ref: `item-${ key }`
       });
     });
@@ -97,6 +113,7 @@ Accordion.propTypes = {
     PropTypes.array
   ]),
   className: PropTypes.string,
+  onClick: PropTypes.func,
   onChange: PropTypes.func,
   style: PropTypes.object
 };
